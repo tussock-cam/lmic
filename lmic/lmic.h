@@ -39,7 +39,11 @@ enum { JOIN_GUARD_ms      =  9000 };  // msecs - don't start Join Req/Acc transa
 enum { TXRX_BCNEXT_secs   =     2 };  // secs - earliest start after beacon time
 enum { RETRY_PERIOD_secs  =     3 };  // secs - random period for retrying a confirmed send
 
-#if defined(CFG_eu868) // EU868 spectrum ====================================================
+#if defined(CFG_kotahi) // KotahiNet NZ spectrum ====================================================
+
+enum { MAX_CHANNELS = 9 };      //!< Max supported channels
+
+#elif defined(CFG_eu868) // EU868 spectrum ====================================================
 
 enum { MAX_CHANNELS = 16 };      //!< Max supported channels
 enum { MAX_BANDS    =  4 };
@@ -56,7 +60,7 @@ TYPEDEF_xref2band_t; //!< \internal
 
 #elif defined(CFG_us915)  // US915 spectrum =================================================
 
-enum { MAX_XCHANNELS = 2 };      // extra channels in RAM, channels 0-71 are immutable 
+enum { MAX_XCHANNELS = 2 };      // extra channels in RAM, channels 0-71 are immutable
 enum { MAX_TXPOW_125kHz = 30 };
 
 #endif // ==========================================================================
@@ -151,7 +155,11 @@ struct lmic_t {
     osjob_t     osjob;
 
     // Channel scheduling
-#if defined(CFG_eu868)
+#if defined(CFG_kotahi)
+    u4_t        channelFreq[MAX_CHANNELS];
+    u2_t        channelDrMap[MAX_CHANNELS];
+    u2_t        channelMap;
+#elif defined(CFG_eu868)
     band_t      bands[MAX_BANDS];
     u4_t        channelFreq[MAX_CHANNELS];
     u2_t        channelDrMap[MAX_CHANNELS];
@@ -205,11 +213,13 @@ struct lmic_t {
     u4_t        dn2Freq;
     u1_t        dn2Ans;       // 0=no answer pend, 0x80+ACKs
 
+#if defined(LORAWAN_CLASSB)
     // Class B state
     u1_t        missedBcns;   // unable to track last N beacons
     u1_t        bcninfoTries; // how often to try (scan mode only)
     u1_t        pingSetAns;   // answer set cmd and ACK bits
     rxsched_t   ping;         // pingable setup
+#endif
 
     // Public part of MAC state
     u1_t        txCnt;
@@ -218,10 +228,12 @@ struct lmic_t {
     u1_t        dataLen;    // 0 no data or zero length data, >0 byte count of data
     u1_t        frame[MAX_LEN_FRAME];
 
+#if defined(LORAWAN_CLASSB)
     u1_t        bcnChnl;
     u1_t        bcnRxsyms;    // 
     ostime_t    bcnRxtime;
     bcninfo_t   bcninfo;      // Last received beacon info
+#endif
 };
 //! \var struct lmic_t LMIC
 //! The state of LMIC MAC layer is encapsulated in this variable.
@@ -238,7 +250,10 @@ void  LMIC_disableChannel (u1_t channel);
 
 void  LMIC_setDrTxpow   (dr_t dr, s1_t txpow);  // set default/start DR/txpow
 void  LMIC_setAdrMode   (bit_t enabled);        // set ADR mode (if mobile turn off)
+
+#if defined(LORAWAN_OTAA)
 bit_t LMIC_startJoining (void);
+#endif
 
 void  LMIC_shutdown     (void);
 void  LMIC_init         (void);
@@ -248,12 +263,14 @@ void  LMIC_setTxData    (void);
 int   LMIC_setTxData2   (u1_t port, xref2u1_t data, u1_t dlen, u1_t confirmed);
 void  LMIC_sendAlive    (void);
 
+#if defined(LORAWAN_CLASSB)
 bit_t LMIC_enableTracking  (u1_t tryBcnInfo);
 void  LMIC_disableTracking (void);
 
 void  LMIC_stopPingable  (void);
 void  LMIC_setPingable   (u1_t intvExp);
 void  LMIC_tryRejoin     (void);
+#endif
 
 void LMIC_setSession (u4_t netid, devaddr_t devaddr, xref2u1_t nwkKey, xref2u1_t artKey);
 void LMIC_setLinkCheckMode (bit_t enabled);

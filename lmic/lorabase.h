@@ -54,45 +54,102 @@ enum { BCN_RESERVE_us    = 2120000 };
 enum { BCN_GUARD_us      = 3000000 };
 enum { BCN_SLOT_SPAN_us  =   30000 };
 
-#if defined(CFG_eu868) // ==============================================
-
-enum _dr_eu868_t { DR_SF12=0, DR_SF11, DR_SF10, DR_SF9, DR_SF8, DR_SF7, DR_SF7B, DR_FSK, DR_NONE };
+#if defined(CFG_kotahi) // ==============================================
+enum _dr_kotahi_t {
+	DR_SF12=0,
+	DR_SF11,
+	DR_SF10,
+	DR_SF9,
+	DR_SF8,
+	DR_SF7,
+	DR_SF7B,
+	DR_NONE
+};
 enum { DR_DFLTMIN = DR_SF7 };
 enum { DR_PAGE = DR_PAGE_EU868 };
 
-// Default frequency plan for EU 868MHz ISM band
-// Bands:
-//  g1 :   1%  14dBm  
-//  g2 : 0.1%  14dBm  
-//  g3 :  10%  27dBm  
-//                 freq             band     datarates
-enum { EU868_F1 = 868100000,      // g1   SF7-12 
-       EU868_F2 = 868300000,      // g1   SF7-12 FSK SF7/250         
-       EU868_F3 = 868500000,      // g1   SF7-12         
-       EU868_F4 = 868850000,      // g2   SF7-12         
-       EU868_F5 = 869050000,      // g2   SF7-12         
-       EU868_F6 = 869525000,      // g3   SF7-12         
-       EU868_J4 = 864100000,      // g2   SF7-12  used during join
-       EU868_J5 = 864300000,      // g2   SF7-12   ditto
-       EU868_J6 = 864500000,      // g2   SF7-12   ditto
+enum { KOTAHI_F1 = 865000000,      // g   SF7-12/125
+       KOTAHI_F2 = 865200000,      // g   SF7-12/125
+       KOTAHI_F3 = 865400000,      // g   SF7-12/125
+       KOTAHI_F4 = 866200000,      // g   SF7-12/125
+       KOTAHI_F5 = 866400000,      // g   SF7-12/125
+       KOTAHI_F6 = 866600000,      // g   SF7-12/125
+       KOTAHI_F7 = 866800000,      // g   SF7-12/125
+       KOTAHI_F8 = 867000000,      // g   SF7-12/125
+       KOTAHI_F9 = 865600000,      // g   SF7/250
+       KOTAHI_DN = 867200000,      // g   Downlink
 };
-enum { EU868_FREQ_MIN = 863000000,
-       EU868_FREQ_MAX = 870000000 };
 
-enum { CHNL_PING         = 5 };
-enum { FREQ_PING         = EU868_F6 };  // default ping freq
+enum { KOTAHI_FREQ_MIN = 863000000,
+       KOTAHI_FREQ_MAX = 870000000 };
+
+enum { CHNL_PING         = 9 };
+enum { FREQ_PING         = KOTAHI_DN };  // default ping freq
 enum { DR_PING           = SF9 };       // default ping DR
-enum { CHNL_DNW2         = 5 };
-enum { FREQ_DNW2         = EU868_F6 };
-enum { DR_DNW2           = DR_SF12 };
-enum { CHNL_BCN          = 5 };
-enum { FREQ_BCN          = EU868_F6 };
+enum { CHNL_DNW2         = 9 };
+enum { FREQ_DNW2         = KOTAHI_DN };
+enum { DR_DNW2           = DR_SF9 };
+enum { CHNL_BCN          = 9 };
+enum { FREQ_BCN          = KOTAHI_DN };
 enum { DR_BCN            = DR_SF9 };
 enum { AIRTIME_BCN       = 144384 };  // micros
 
 enum {
     // Beacon frame format EU SF9
-    OFF_BCN_NETID    = 0,         
+    OFF_BCN_NETID    = 0,
+    OFF_BCN_TIME     = 3,
+    OFF_BCN_CRC1     = 7,
+    OFF_BCN_INFO     = 8,
+    OFF_BCN_LAT      = 9,
+    OFF_BCN_LON      = 12,
+    OFF_BCN_CRC2     = 15,
+    LEN_BCN          = 17
+};
+
+#elif defined(CFG_eu868) // ==============================================
+
+enum _dr_eu868_t { DR_SF12=0, DR_SF11, DR_SF10, DR_SF9, DR_SF8, DR_SF7, DR_SF7B, DR_FSK, DR_NONE };
+enum { DR_DFLTMIN = DR_SF7 };
+enum { DR_PAGE = DR_PAGE_EU868 };
+
+// Default frequency plan for EU 868MHz ISM band, based on the Semtech global_conf.json defaults,
+// used in The Things Network on Kerlink and other gateways.
+// Subject to change!
+//
+// Bands:
+//  g  :   1%  14dBm
+//  g1 :   1%  14dBm
+//  g2 : 0.1%  14dBm
+//  g3 :  10%  27dBm
+//                 freq             band     datarates
+enum { EU868_F1 = 868100000,      // g1   SF7-12           used during join
+       EU868_F2 = 868300000,      // g1   SF7-12 SF7/250   ditto
+       EU868_F3 = 868500000,      // g1   SF7-12           ditto
+       EU868_F4 = 867100000,      // g    SF7-12
+       EU868_F5 = 867300000,      // g    SF7-12
+       EU868_F6 = 867500000,      // g    SF7-12
+       EU868_F7 = 867700000,      // g    SF7-12
+       EU868_F8 = 867900000,      // g    SF7-12
+       EU868_F9 = 868800000,      // g2   FSK
+       EU868_DN = 869525000,      // g3   Downlink
+};
+enum { EU868_FREQ_MIN = 863000000,
+       EU868_FREQ_MAX = 870000000 };
+
+enum { CHNL_PING         = 9 };
+enum { FREQ_PING         = EU868_DN };  // default ping freq
+enum { DR_PING           = SF9 };       // default ping DR
+enum { CHNL_DNW2         = 9 };
+enum { FREQ_DNW2         = EU868_DN };
+enum { DR_DNW2           = DR_SF9 };
+enum { CHNL_BCN          = 9 };
+enum { FREQ_BCN          = EU868_DN };
+enum { DR_BCN            = DR_SF9 };
+enum { AIRTIME_BCN       = 144384 };  // micros
+
+enum {
+    // Beacon frame format EU SF9
+    OFF_BCN_NETID    = 0,
     OFF_BCN_TIME     = 3,
     OFF_BCN_CRC1     = 7,
     OFF_BCN_INFO     = 8,
@@ -133,7 +190,7 @@ enum { AIRTIME_BCN       = 72192 };  // micros
 
 enum {
     // Beacon frame format US SF10
-    OFF_BCN_NETID    = 0,         
+    OFF_BCN_NETID    = 0,
     OFF_BCN_TIME     = 3,
     OFF_BCN_CRC1     = 7,
     OFF_BCN_INFO     = 9,
@@ -291,7 +348,22 @@ enum {
     MCMD_LADR_POW_MASK   = 0x0F,
     MCMD_LADR_DR_SHIFT   = 4,
     MCMD_LADR_POW_SHIFT  = 0,
-#if defined(CFG_eu868)
+#if defined(CFG_kotahi)
+    MCMD_LADR_SF12      = DR_SF12<<4,
+    MCMD_LADR_SF11      = DR_SF11<<4,
+    MCMD_LADR_SF10      = DR_SF10<<4,
+    MCMD_LADR_SF9       = DR_SF9 <<4,
+    MCMD_LADR_SF8       = DR_SF8 <<4,
+    MCMD_LADR_SF7       = DR_SF7 <<4,
+    MCMD_LADR_SF7B      = DR_SF7B<<4,
+
+    MCMD_LADR_20dBm     = 0,
+    MCMD_LADR_14dBm     = 1,
+    MCMD_LADR_11dBm     = 2,
+    MCMD_LADR_8dBm      = 3,
+    MCMD_LADR_5dBm      = 4,
+    MCMD_LADR_2dBm      = 5,
+#elif defined(CFG_eu868)
     MCMD_LADR_SF12      = DR_SF12<<4,
     MCMD_LADR_SF11      = DR_SF11<<4,
     MCMD_LADR_SF10      = DR_SF10<<4,
@@ -354,17 +426,14 @@ inline rps_t makeRps (sf_t sf, bw_t bw, cr_t cr, int ih, int nocrc) {
     return sf | (bw<<3) | (cr<<5) | (nocrc?(1<<7):0) | ((ih&0xFF)<<8);
 }
 #define MAKERPS(sf,bw,cr,ih,nocrc) ((rps_t)((sf) | ((bw)<<3) | ((cr)<<5) | ((nocrc)?(1<<7):0) | ((ih&0xFF)<<8)))
-// Two frames with params r1/r2 would interfere on air: same SFx + BWx 
+// Two frames with params r1/r2 would interfere on air: same SFx + BWx
 inline int sameSfBw(rps_t r1, rps_t r2) { return ((r1^r2)&0x1F) == 0; }
 
 extern const u1_t _DR2RPS_CRC[];
 inline rps_t updr2rps (dr_t dr) { return (rps_t)_DR2RPS_CRC[dr+1]; }
 inline rps_t dndr2rps (dr_t dr) { return setNocrc(updr2rps(dr),1); }
-inline int isFasterDR (dr_t dr1, dr_t dr2) { return dr1 > dr2; }
-inline int isSlowerDR (dr_t dr1, dr_t dr2) { return dr1 < dr2; }
-inline dr_t  incDR    (dr_t dr) { return _DR2RPS_CRC[dr+2]==ILLEGAL_RPS ? dr : (dr_t)(dr+1); } // increase data rate
+
 inline dr_t  decDR    (dr_t dr) { return _DR2RPS_CRC[dr  ]==ILLEGAL_RPS ? dr : (dr_t)(dr-1); } // decrease data rate
-inline dr_t  assertDR (dr_t dr) { return _DR2RPS_CRC[dr+1]==ILLEGAL_RPS ? DR_DFLTMIN : dr; }   // force into a valid DR
 inline bit_t validDR  (dr_t dr) { return _DR2RPS_CRC[dr+1]!=ILLEGAL_RPS; } // in range
 inline dr_t  lowerDR  (dr_t dr, u1_t n) { while(n--){dr=decDR(dr);} return dr; } // decrease data rate by n steps
 
