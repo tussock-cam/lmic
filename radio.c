@@ -636,7 +636,7 @@ static void startrx (u1_t rxmode) {
 }
 
 // get random seed from wideband noise rssi
-void radio_init () {
+void lmic_radio_init (void) {
     hal_disableIRQs();
 
     // manually reset radio

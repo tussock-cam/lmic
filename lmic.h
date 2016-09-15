@@ -15,8 +15,8 @@
 #ifndef _lmic_h_
 #define _lmic_h_
 
-#include "oslmic.h"
 #include "lorabase.h"
+#include "../oslmic.h"
 
 // LMIC version
 #define LMIC_VERSION_MAJOR 1

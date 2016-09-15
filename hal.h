@@ -12,6 +12,8 @@
 #ifndef _hal_hpp_
 #define _hal_hpp_
 
+#include "lmic-types.h"
+
 /*
  * initialize hardware (IO, SPI, TIMER, IRQ).
  */

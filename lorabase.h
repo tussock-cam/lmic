@@ -12,6 +12,8 @@
 #ifndef _lorabase_h_
 #define _lorabase_h_
 
+#include "../oslmic.h"
+
 // ================================================================================
 // BEG: Keep in sync with lorabase.hpp
 //

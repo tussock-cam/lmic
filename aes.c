@@ -9,7 +9,7 @@
  *    IBM Zurich Research Lab - initial API, implementation and documentation
  *******************************************************************************/
 
-#include "oslmic.h"
+#include "../oslmic.h"
 
 #define AES_MICSUB 0x30 // internal use only
 
